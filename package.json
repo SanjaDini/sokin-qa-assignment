@@ -1,0 +1,27 @@
+{
+  "name": "sokin-qa-assignment",
+  "version": "1.0.0",
+  "description": "QA Analyst (Web) Technical Assignment - automationexercise.com",
+  "scripts": {
+    "test": "playwright test",
+    "test:api": "playwright test --project=api",
+    "test:e2e": "playwright test --project=e2e-chromium",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:headed": "playwright test --headed --project=e2e-chromium",
+    "report": "playwright show-report",
+    "lint": "eslint . --ext .ts",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.49.1",
+    "@types/node": "22.10.2",
+    "typescript": "5.7.2",
+    "@typescript-eslint/eslint-plugin": "7.18.0",
+    "@typescript-eslint/parser": "7.18.0",
+    "eslint": "8.57.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
