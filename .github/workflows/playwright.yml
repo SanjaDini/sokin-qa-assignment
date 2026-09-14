@@ -34,10 +34,6 @@ jobs:
     name: API Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
-    if: >
-      github.event.inputs.test_scope == '' ||
-      github.event.inputs.test_scope == 'all' ||
-      github.event.inputs.test_scope == 'api'
 
     steps:
       - name: Checkout repository
@@ -74,15 +70,6 @@ jobs:
     name: E2E Tests (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: api-tests
-    if: >
-      always() &&
-      needs.api-tests.result == 'success' &&
-      (
-        github.event.inputs.test_scope == '' ||
-        github.event.inputs.test_scope == 'all' ||
-        github.event.inputs.test_scope == 'e2e'
-      )
 
     steps:
       - name: Checkout repository
