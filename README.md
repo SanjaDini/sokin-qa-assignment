@@ -141,15 +141,14 @@ BASE_URL=https://staging.example.com npm run test:e2e
 
 ## CI/CD
 
-The `.github/workflows/playwright.yml` file defines three jobs:
+The `.github/workflows/playwright.yml` file defines two jobs:
 
 | Job | Trigger | What it runs |
 |-----|---------|-------------|
-| `api-tests` | push / PR / manual | All API specs |
-| `e2e-tests` | push / PR / manual | All E2E specs (Chromium) |
-| `smoke-gate` | Pull requests only | `@smoke` tagged tests across both projects |
+| `api-tests` | push to `master` / PR / manual | All API specs |
+| `e2e-tests` | push to `master` / PR / manual | All E2E specs (Chromium) |
 
-HTML reports and failure artefacts (screenshots, videos, traces) are uploaded as workflow artefacts and retained for 7–14 days.
+Both jobs run in parallel on every push to `master` and on every pull request targeting `master`. HTML reports and failure artefacts (screenshots, videos, traces) are uploaded as workflow artefacts and retained for 7–14 days.
 
 To configure the target URLs in GitHub Actions, add Repository Variables:
 - `BASE_URL`
