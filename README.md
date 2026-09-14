@@ -2,7 +2,7 @@
 
 Playwright + TypeScript test suite for the [automationexercise.com](https://automationexercise.com) demo e-commerce application.
 
-Submitted as part of the **QA Analyst (Web)** technical assignment for Sokin.
+Submitted as part of the **QA Analyst** technical assignment for Sokin.
 
 ---
 
@@ -97,7 +97,7 @@ npm run test:api
 npm run test:e2e
 ```
 
-### Smoke tests only (fast subset, ~3 min)
+### Smoke tests only
 
 ```bash
 npm run test:smoke
@@ -141,15 +141,14 @@ BASE_URL=https://staging.example.com npm run test:e2e
 
 ## CI/CD
 
-The `.github/workflows/playwright.yml` file defines three jobs:
+The `.github/workflows/playwright.yml` file defines two jobs:
 
 | Job | Trigger | What it runs |
 |-----|---------|-------------|
-| `api-tests` | push / PR / manual | All API specs |
-| `e2e-tests` | push / PR / manual | All E2E specs (Chromium) |
-| `smoke-gate` | Pull requests only | `@smoke` tagged tests across both projects |
+| `api-tests` | push to `master` / PR / manual | All API specs |
+| `e2e-tests` | push to `master` / PR / manual | All E2E specs (Chromium) |
 
-HTML reports and failure artefacts (screenshots, videos, traces) are uploaded as workflow artefacts and retained for 7–14 days.
+Both jobs run in parallel on every push to `master` and on every pull request targeting `master`. HTML reports and failure artefacts (screenshots, videos, traces) are uploaded as workflow artefacts and retained for 7–14 days.
 
 To configure the target URLs in GitHub Actions, add Repository Variables:
 - `BASE_URL`
@@ -186,7 +185,6 @@ POMs keep locators co-located with the page they belong to. When the site change
 
 ## Known limitations
 
-- **Ad overlays** — The demo site serves Google Ads that can occasionally intercept clicks. A `dismissAdOverlay()` helper attempts to dismiss them but is not 100% reliable. Tests have a retry policy (2 in CI) to absorb this.
 - **Shared demo environment** — The site is public. If another user deletes the `EXISTING_USER` account or exhausts available product IDs, certain tests may fail.
 - **Payment flow** — Uses a simulated card (`4111 1111 1111 1111`). The demo payment step may change without notice.
 - **No Firefox / WebKit** — Cross-browser projects are included but commented out in the config. They can be re-enabled by uncommenting the relevant section in `playwright.config.ts`.

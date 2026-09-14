@@ -15,7 +15,6 @@ on:
         type: choice
         options:
           - all
-          - smoke
           - api
           - e2e
 
@@ -39,7 +38,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -76,7 +74,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
 
       - name: Install dependencies
         run: npm ci
@@ -85,12 +82,7 @@ jobs:
         run: npx playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: |
-          if [ "${{ github.event.inputs.test_scope }}" = "smoke" ]; then
-            npx playwright test --project=e2e-chromium --grep @smoke
-          else
-            npx playwright test --project=e2e-chromium
-          fi
+        run: npx playwright test --project=e2e-chromium
         env:
           CI: true
           BASE_URL: ${{ vars.BASE_URL || 'https://automationexercise.com' }}
@@ -109,43 +101,4 @@ jobs:
         with:
           name: e2e-test-results
           path: test-results/
-          retention-days: 7
-
-  # ─── Smoke only (fast gate for PRs) ───────────────────────────────────────
-  smoke-gate:
-    name: Smoke Gate (PR fast-path)
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    # Only run on PRs, not on direct pushes
-    if: github.event_name == 'pull_request'
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: Run smoke tests (all projects)
-        run: npx playwright test --grep @smoke
-        env:
-          CI: true
-          BASE_URL: ${{ vars.BASE_URL || 'https://automationexercise.com' }}
-          API_BASE_URL: ${{ vars.API_BASE_URL || 'https://automationexercise.com' }}
-
-      - name: Upload smoke test report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: smoke-test-report
-          path: playwright-report/
           retention-days: 7
