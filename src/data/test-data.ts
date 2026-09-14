@@ -12,7 +12,7 @@ export const API_BASE_URL =
 
 // A pre-registered account that is never deleted.
 export const EXISTING_USER = {
-  email: "sokin.qa.test@mailcatcher.com",
+  email: "sokin.qa.test@mailcather.com",
   password: "SokinQA2026!",
   name: "Sokin QA",
 } as const;

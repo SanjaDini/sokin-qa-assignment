@@ -7,8 +7,8 @@ import { BasePage } from "./BasePage";
  */
 export class SignupPage extends BasePage {
   // ── Personal info ─────────────────────────────────────────────────────────
-  readonly titleMr = this.page.getByLabel("Mr");
-  readonly titleMrs = this.page.getByLabel("Mrs");
+  readonly titleMr = this.page.locator("#id_gender1");
+  readonly titleMrs = this.page.locator("#id_gender2");
   readonly passwordField = this.page.locator('[data-qa="password"]');
   readonly daySelect = this.page.locator('[data-qa="days"]');
   readonly monthSelect = this.page.locator('[data-qa="months"]');
