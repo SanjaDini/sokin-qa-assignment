@@ -48,6 +48,14 @@ test.describe('Verify Login API', () => {
     expect(body.message).toMatch(/missing/i);
   });
 
+  test('POST verifyLogin missing password param returns 400 @regression', async ({ api }) => {
+    const response = await api.verifyLoginMissingPassword(EXISTING_USER.email);
+
+    const body = await response.json() as { responseCode: number; message: string };
+    expect(body.responseCode).toBe(400);
+    expect(body.message).toMatch(/missing/i);
+  });
+
   test('DELETE verifyLogin returns 405 method not supported @regression', async ({ api }) => {
     const response = await api.deleteVerifyLogin();
 
