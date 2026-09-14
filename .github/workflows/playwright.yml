@@ -5,7 +5,11 @@ on:
     branches: [master]
   pull_request:
     branches: [master]
-  # Allow manual runs from the GitHub Actions UI
+  # Nightly run — catches regressions introduced by live-site changes,
+  # not just by code changes.
+  schedule:
+    - cron: '0 6 * * *'
+  # Allow manual runs from the GitHub Actions UI with scope selection.
   workflow_dispatch:
     inputs:
       test_scope:
@@ -19,16 +23,21 @@ on:
           - e2e
 
 concurrency:
-  # Cancel in-progress runs for the same PR / branch to save CI minutes
+  # Cancel in-progress runs for the same PR / branch to save CI minutes.
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
   # ─── API Tests ─────────────────────────────────────────────────────────────
+  # Runs first. No point starting browsers if the backend contract is broken.
   api-tests:
     name: API Tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    if: >
+      github.event.inputs.test_scope == '' ||
+      github.event.inputs.test_scope == 'all' ||
+      github.event.inputs.test_scope == 'api'
 
     steps:
       - name: Checkout repository
@@ -42,9 +51,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright (no browsers needed for API tests)
+      - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        # Chromium is required even for API project due to Playwright's worker model
 
       - name: Run API tests
         run: npx playwright test --project=api
@@ -61,10 +69,20 @@ jobs:
           retention-days: 14
 
   # ─── E2E Tests ─────────────────────────────────────────────────────────────
+  # Only runs when API tests pass. Saves CI time on a broken backend.
   e2e-tests:
     name: E2E Tests (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    needs: api-tests
+    if: >
+      always() &&
+      needs.api-tests.result == 'success' &&
+      (
+        github.event.inputs.test_scope == '' ||
+        github.event.inputs.test_scope == 'all' ||
+        github.event.inputs.test_scope == 'e2e'
+      )
 
     steps:
       - name: Checkout repository

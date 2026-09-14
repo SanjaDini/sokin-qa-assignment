@@ -49,6 +49,12 @@ export class ApiClient {
     });
   }
 
+  async verifyLoginMissingPassword(email: string) {
+    return this.request.post(`${API_BASE_URL}/api/verifyLogin`, {
+      form: { email },
+    });
+  }
+
   async deleteVerifyLogin() {
     return this.request.delete(`${API_BASE_URL}/api/verifyLogin`);
   }
@@ -64,6 +70,10 @@ export class ApiClient {
     return this.request.get(`${API_BASE_URL}/api/getUserDetailByEmail`, {
       params: { email },
     });
+  }
+
+  async getUserDetailMissingParam() {
+    return this.request.get(`${API_BASE_URL}/api/getUserDetailByEmail`);
   }
 
   async updateUser(payload: CreateUserPayload) {

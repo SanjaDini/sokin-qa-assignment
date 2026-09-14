@@ -73,6 +73,30 @@ test.describe('User CRUD API', () => {
     expect(body.message).toMatch(/not found/i);
   });
 
+  test('GET getUserDetailByEmail without email param returns 400 @regression', async ({ api }) => {
+    const response = await api.getUserDetailMissingParam();
+
+    const body = await response.json() as { responseCode: number; message: string };
+    expect(body.responseCode).toBe(400);
+  });
+
+  test('PUT updateAccount for non-existent user returns 404 @regression', async ({ api }) => {
+    const payload = buildUserPayload({ email: `ghost.${Date.now()}@invalid.test` });
+    const response = await api.updateUser(payload);
+
+    const body = await response.json() as { responseCode: number; message: string };
+    expect(body.responseCode).toBe(404);
+    expect(body.message).toMatch(/not found/i);
+  });
+
+  test('POST createAccount with missing required fields returns 400 @regression', async ({ api }) => {
+    // Send only email — name, password and address fields are all missing
+    const response = await api.createUser({ email: `incomplete.${Date.now()}@test.com` } as never);
+
+    const body = await response.json() as { responseCode: number; message: string };
+    expect(body.responseCode).toBe(400);
+  });
+
   test('PUT updateAccount returns 200 and updates the user @regression', async ({ api }) => {
     const payload = buildUserPayload();
     await api.createUser(payload);
